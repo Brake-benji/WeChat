@@ -26,7 +26,7 @@ class IndexController extends Controller{
         }
     }
 
-    //接受时间推送并回复
+    //接受事件推送并回复
     public function responseMsg(){
         //获取微信推送的数据，xml格式
         $postArr = $GLOBALS['HTTP_RAW_POST_DATA'];
