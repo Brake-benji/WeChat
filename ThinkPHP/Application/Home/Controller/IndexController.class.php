@@ -81,14 +81,14 @@ class IndexController extends Controller{
         if(strtolower($postObj->MsgType == "text") && strtolower($postObj->Content) == "图文"){
              $Article = array(
                         array(
-                    "title" => "测试图文1",
-                    "description" => "这条是测试图文1，调转至度娘！",
+                    "title" => "【今日头条】富顺一个80的老人流浪汉被拒载，高中生花钱给...",
+                    "description" => "百度的描述",
                     "picurl" => "http://www.baidu.com/img/bd_logo1.png",
                     "url" => "http://www.baidu.com"
                 ),
                         array(
-                    "title" => "测试图文2的标题",
-                    "description" => "调转至微博",
+                    "title" => "你为什么不好好参加同学会，来我们好好谈谈",
+                    "description" => "微博的描述",
                     "picurl" => "http://u1.img.mobile.sina.cn/public/files/image/620x300_img570b26e084465.png",
                     "url" => "http://www.weibo.com"
                 ),
@@ -121,10 +121,12 @@ class IndexController extends Controller{
                     $Content = "<a href='http://www.xx-star.cn'>个人网站入口</a>";
                     break;
                 case '个人信息':
-                    $Content = "青椒白饭，本科，计算机专业，热爱互联网，PHPer,在成为大牛的路上努力着！喜欢打篮球，热爱音乐，外向兼内向的boy!";
+                    $Content = "青椒白饭Me.Xie，本科，计算机专业，热爱互联网，PHPer,在成为大牛的路上努力着！喜欢打篮球，热爱音乐，外向兼内向的boy!";
                     break;
                 default :
-                    $Content = "什么，你说我帅？";
+                    $Content = $postObj->Content;
+                    $msg = new IndexModel();
+                    $msg->msgRobot($postObj,$Content);
                     break;
                 }
             $msg = new IndexModel();
@@ -188,8 +190,8 @@ class IndexController extends Controller{
         }else{
             //如果session不存在或者已过期则重新获取
             //1.请求地址
-        $appid = 'wxc54bbd960*****';  //换成你自己的$appid
-        $appsecret = 'fd5db7f8************';  //换成你自己的$appsecret
+        $appid = 'wxc54bbd960bbd2dae';
+        $appsecret = 'fd5db7f8eaedf8f99f31328913031424';
         $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=".$appid."&secret=".$appsecret;
         $res = $this->httpCurl($url,'get','json');
         $access_token = $res['access_token'];  //将重新获取到的access_token存到session
@@ -200,12 +202,12 @@ class IndexController extends Controller{
     }
 
     //自定义菜单栏创建
-    public function createMenu(){
+    public function defineMenu(){
         //微信接口的调用方式都是通过curl post/get调用
         header('content-type:text/html;charset=utf-8');
         $access_token = $this->getWxAccessToken();  //获取access_token        
         $url = "https://api.weixin.qq.com/cgi-bin/menu/get?access_token=".$access_token;
-        //这种菜单栏建造的方式借鉴微信官方
+        //这个方式成功
         $postArr = '{
                 "button":[
                 {
@@ -427,13 +429,14 @@ class IndexController extends Controller{
         var_dump($jsapi_ticket);
         $timestamp = time();
         $noncestr = $this->getRandCode();
-        // 注意 URL 一定要动态获取，不能 hardcode
+        //$url = "http://1.xxsafe.applinzi.com/index.php/Home/Index/jsShare";
+        // 注意 URL 一定要动态获取，不能 hardcode.
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
         $url = "$protocol$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
         //2.获取signature签名算法
         $string = "jsapi_ticket=$jsapi_ticket&noncestr=$noncestr&timestamp=$timestamp&url=$url";
         $signature = sha1($string);
-        //var_dump($signature);
+        var_dump($signature);
         $this->assign('timestamp',$timestamp);
         $this->assign('nonceStr',$noncestr);
         $this->assign('signature',$signature);

@@ -165,5 +165,22 @@ class IndexModel extends Model{
     }
   }
 
+  //图灵机器人自动回复，要有图灵还有百度的apiKey,图灵机器人功能不是特别强大不够智能
+  public function msgRobot($postObj,$Content){
+    $words = trim($Content);
+    $ch = curl_init();
+    $url = 'http://apis.baidu.com/turing/turing/turing?key=图灵apiKey&info='.$words;
+    $header = array(
+        'apikey: 百度apiKey',
+    );
+    // 添加apikey到header
+    curl_setopt($ch, CURLOPT_HTTPHEADER  , $header);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    // 执行HTTP请求
+    curl_setopt($ch , CURLOPT_URL , $url);
+    $res = curl_exec($ch);
 
+    $Content = json_decode($res,true);  //把json转为array
+    self::autoMsg($postObj,$Content['text']);
+  }
 }
